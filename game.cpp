@@ -143,6 +143,7 @@ class GameBoard{
                 }
                 y = falling.pos;
             }
+            cout << "highest: " << highest << endl;
             int x = board_row-1-highest; 
             cout << x << "," << y << endl;
             
@@ -159,11 +160,17 @@ class GameBoard{
                 game[x+dir.x][y+dir.y+falling.move] = 1;
                 // update log
                 rowfull_log[x+dir.x]++;
-                //height_log[y+dir.y+falling.move]++; //這裡出錯了!!
+
+                // 出錯了！！
+                //height_log[y+dir.y+falling.move]++; 
                 height_log[y+dir.y+falling.move] = max(height_log[y+dir.y+falling.move]++,board_row-(x+dir.x));
             }
             return true;
         } 
+        
+        bool move(Tetris falling){
+            return true;
+        }
         void clean(){
             // check need to clean or not
             // if no return

@@ -1,21 +1,11 @@
-4,0
-going to put:2,0
-going to put:3,0
-going to put:4,0
-going to put:4,1
-4,2
-going to put:3,1
-going to put:3,2
-going to put:3,3
-going to put:4,2
-2,3
+highest: 0
+4,5
 going to put:1,5
-going to put:2,3
-going to put:2,4
 going to put:2,5
-0 0 0 0 0 0 
-0 0 0 0 0 1 
-1 0 0 1 1 1 
-1 1 1 1 0 0 
-1 1 1 0 0 0 
-end of game, remember to remove this line!!
+going to put:3,5
+going to put:4,5
+highest: 0
+4,3
+going to put:3,4
+going to put:3,5
+drop_move failed

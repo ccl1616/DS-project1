@@ -1,0 +1,53 @@
+// normal
+const std::array<std::array<Point, 4>, 19> spots{{
+            {Point(-1,0),Point(-1,1),Point(-1,2),Point(0,1)}, 
+            {Point(-2,1),Point(-1,0),Point(-1,1),Point(0,1)}, 
+            {Point(-1,1),Point(0,0),Point(0,1),Point(0,2)},
+            {Point(-2,0),Point(-1,0),Point(-1,1),Point(0,0)},
+
+            {Point(-2,0),Point(-1,0),Point(0,0),Point(0,1)},
+            {Point(-1,0),Point(-1,1),Point(-1,2),Point(0,0)},
+            {Point(-2,0),Point(-2,1),Point(-1,1),Point(0,1)}, 
+            {Point(-1,2),Point(0,0),Point(0,1),Point(0,2)},
+
+            {Point(-2,1),Point(-1,1),Point(0,0),Point(0,1)},
+            {Point(-1,0),Point(0,0),Point(0,1),Point(0,2)},
+            {Point(-2,0),Point(-2,1),Point(-1,0),Point(0,0)},
+            {Point(-1,0),Point(-1,-1),Point(-1,2),Point(0,2)}, 
+
+            {Point(-1,1),Point(-1,2),Point(0,0),Point(0,1)},
+            {Point(-2,0),Point(-1,0),Point(-1,1),Point(0,1)}, 
+            {Point(-1,0),Point(-1,1),Point(0,1),Point(0,2)}, 
+            {Point(-2,1),Point(-1,0),Point(-1,1),Point(0,0)},
+
+            {Point(-3,0),Point(-2,0),Point(-1,0),Point(0,0)},
+            {Point(0,0),Point(0,1),Point(0,2),Point(0,3)},
+            {Point(-1,0),Point(-1,1),Point(0,0),Point(0,1)}
+}};
+
+// special
+const std::array<std::array<Point, 4>, 19> spots{{
+            {Point(-1,-1),Point(-1,0),Point(-1,1),Point(0,0)}, // special
+            {Point(-2,0),Point(-1,-1),Point(-1,0),Point(0,0)}, // spacial
+            {Point(-1,1),Point(0,0),Point(0,1),Point(0,2)},
+            {Point(-2,0),Point(-1,0),Point(-1,1),Point(0,0)},
+
+            {Point(-2,0),Point(-1,0),Point(0,0),Point(0,1)},
+            {Point(-1,0),Point(-1,1),Point(-1,2),Point(0,0)},
+            {Point(-2,-1),Point(-2,0),Point(-1,0),Point(0,0)}, //special
+            {Point(-1,2),Point(0,0),Point(0,1),Point(0,2)},
+
+            {Point(-2,1),Point(-1,1),Point(0,0),Point(0,1)},
+            {Point(-1,0),Point(0,0),Point(0,1),Point(0,2)},
+            {Point(-2,0),Point(-2,1),Point(-1,0),Point(0,0)},
+            {Point(-1,-2),Point(-1,-1),Point(-1,0),Point(0,0)}, //special
+
+            {Point(-1,1),Point(-1,2),Point(0,0),Point(0,1)},
+            {Point(-2,-1),Point(-1,-1),Point(-1,0),Point(0,0)}, //spacial
+            {Point(-1,-1),Point(-1,0),Point(0,0),Point(0,1)}, //special
+            {Point(-2,1),Point(-1,0),Point(-1,1),Point(0,0)},
+
+            {Point(-3,0),Point(-2,0),Point(-1,0),Point(0,0)},
+            {Point(0,0),Point(0,1),Point(0,2),Point(0,3)},
+            {Point(-1,0),Point(-1,1),Point(0,0),Point(0,1)}
+}};
