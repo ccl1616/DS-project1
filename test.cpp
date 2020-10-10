@@ -30,32 +30,28 @@ const std::array<std::array<Point, 4>, 4> spots{{
             {Point(-2,0),Point(-1,0),Point(-1,-1),Point(0,0)}
 }};
 
-std::array<std::array<bool, 15>, 5> game;
+std::array<std::array<int, 5>, 5> game;
 int main(int argc, char** argv)
 {
-    /*
-    for(int i = 0; i < 4; i ++)
-        cout << spots[0][i].x << " "<< spots[0][i].y << " ";
-    cout << endl;
-    */
-    /*
-    int r,c;
-    cin >> r >> c;
-    string name;
-    string end = "End";
-    while(cin >> name){
-        if( name.compare(end) == 0)
-            break;
-        else{
-            cin >> r >> c;
-            cout << name << " " << r << " " << c << endl;
-        }
-    }*/
-    
-    for(int i = 0; i < 5; i ++){
-        for(int j = 0; j < 14; j ++){
+    for(int i = 0; i <5; i ++){
+        for(int j = 0; j < 5; j ++)
+            game[i][j] = 10*i + j;
+    }
+    for(int i = 0; i <5; i ++){
+        for(int j = 0; j < 5; j ++)
             cout << game[i][j] << " ";
-        }
+        cout << endl;
+    }
+    int target = 4;
+    for(int i = target; i >= 0; i --){
+        game[i] = game[i-1];
+    }
+    for(int i = 0; i < 5; i ++)
+        game[0][i] = 0;
+        
+    for(int i = 0; i <5; i ++){
+        for(int j = 0; j < 5; j ++)
+            cout << game[i][j] << " ";
         cout << endl;
     }
     

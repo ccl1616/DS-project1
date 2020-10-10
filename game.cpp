@@ -14,7 +14,7 @@ using namespace std;
 #define MAX_col 40
 int board_row;
 int board_col;
-int rowfull_log[MAX_row];
+int clean_log[MAX_row];
 int height_log[MAX_col];
 
 struct Point{
@@ -126,7 +126,7 @@ class GameBoard{
             for(int i = 0; i < board_col; i ++)
                 height_log[i] = 0;
             for(int i = 0; i < board_row; i ++)
-                rowfull_log[i] = 0;
+                clean_log[i] = 0;
             for(int i = 0; i < board_row; i ++){
                 for(int j = 0; j < board_col; j++)
                     game[i][j] = 0;
@@ -135,12 +135,13 @@ class GameBoard{
         ~GameBoard(){ }
 
         bool is_empty(Tetris falling); //check this place is able to drop
+        
         bool check_drop(Tetris &falling); //check next row
         void do_drop_move(Tetris &falling,int x,int y); // drop to x,y
         bool put_in(Tetris falling); //check valid, put in by current x,y
-        
         bool check_move(Tetris &falling);
-        void clean();
+        void check_clean();
+        void do_clean(int target);
 };
 
 bool GameBoard::is_empty(Tetris f){
@@ -178,19 +179,21 @@ void GameBoard::do_drop_move(Tetris &falling,int x, int y){
     falling.y = y;
 }
 bool GameBoard::put_in(Tetris f){
+    //cout << "put at: " << f.x << "," << f.y << endl;
     for(int i = 0; i < 4; i ++){
         Point dir = spots[f.id][i];
         game[f.x+dir.x][f.y+dir.y]=1; // occupied
+        clean_log[f.x+dir.x]++;
         highest = min(highest,f.x+dir.x); //越高的row id會是越小的
     }
     return true;
 }
 
 bool GameBoard::check_move(Tetris &falling){
-    cout << "before move: " << falling.x << "," << falling.y << endl;
+    //cout << "before move: " << falling.x << "," << falling.y << endl;
     int x = falling.x;
     int y = falling.y+falling.move;
-    cout << "going to move to: " << x << "," << y << endl;
+    //cout << "going to move to: " << x << "," << y << endl;
 
     if(y < 0 || y >= board_col) return false;
     for(int i = 0; i < 4; i ++){
@@ -201,12 +204,21 @@ bool GameBoard::check_move(Tetris &falling){
     do_drop_move(falling,x,y);
     return true;
 }
-void GameBoard::clean(){
-            // check need to clean or not
-            // if no return
-            // then clean
-            // drop all above
-            return;
+
+void GameBoard::check_clean(){
+    // check need to clean or not
+    for(int i = 0; i < board_row; i ++){
+        if(clean_log[i] == board_col)
+            do_clean(i);
+    }
+    return;
+}
+void GameBoard::do_clean(int target){
+    // clean the row
+    
+    // 降下row i以上的人們
+    // do the log
+    return;
 }
 
 int main(int argc, char** argv)
@@ -250,12 +262,7 @@ int main(int argc, char** argv)
                 now.x = mygame->highest-1;
                 now.y = now.pos;
                 //cout << inputName << ":" << now.x << "," << now.y << endl;
-                if(! mygame->is_empty(now) ){
-                    cout << "this place in not empty\n";
-                    return 0;
-                }
                 if(!mygame->check_drop(now) ){
-                    cout << "after drop pt: " << now.x << "," << now.y << endl;
                     if(move != 0){
                         if( !mygame->check_move(now)){
                             cout << "invalid to move\n";
@@ -264,18 +271,13 @@ int main(int argc, char** argv)
                         if( !mygame->check_drop(now))
                             mygame->put_in(now);
                     }
-                    else mygame->put_in(now);
+                    else {
+                        // <todo> check_valid
+                        mygame->put_in(now);
+                    }
                 }
+
             }
-            // 看要不要move
-            /*
-            if(!move){
-                if(! mygame->move(now) ){
-                    cout << "move failed\n";
-                    return 0;
-                }
-            }
-            */
         }
     }
     // ==========================================================================================
