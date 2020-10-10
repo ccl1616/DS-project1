@@ -136,10 +136,10 @@ class GameBoard{
 
         bool is_empty(Tetris falling); //check this place is able to drop
         bool check_drop(Tetris &falling); //check next row
-        void do_drop(Tetris &falling,int x,int y); // drop to x,y
-        bool put_in(Tetris falling); //put in by current x,y
+        void do_drop_move(Tetris &falling,int x,int y); // drop to x,y
+        bool put_in(Tetris falling); //check valid, put in by current x,y
         
-        bool move(Tetris falling);
+        bool check_move(Tetris &falling);
         void clean();
 };
 
@@ -153,8 +153,8 @@ bool GameBoard::is_empty(Tetris f){
     }
     return true;
 }
-
 bool GameBoard::check_drop(Tetris &falling){
+    if(falling.x == board_row-1) return false;
     int x = falling.x+1;
     int y = falling.y;
     //cout << "check_drop: " << x << "," << y << endl;
@@ -166,14 +166,14 @@ bool GameBoard::check_drop(Tetris &falling){
         if(game[x+dir.x][y+dir.y]) return false; // occupied
     }
     if(x == board_row-1){
-        do_drop(falling,x,y);
+        do_drop_move(falling,x,y);
         return false;
     }
-    do_drop(falling,x,y);
+    do_drop_move(falling,x,y);
     if(!check_drop(falling)) return false;
     return false;
 }
-void GameBoard::do_drop(Tetris &falling,int x, int y){
+void GameBoard::do_drop_move(Tetris &falling,int x, int y){
     falling.x = x;
     falling.y = y;
 }
@@ -186,8 +186,19 @@ bool GameBoard::put_in(Tetris f){
     return true;
 }
 
-// 還沒做
-bool GameBoard::move(Tetris falling){
+bool GameBoard::check_move(Tetris &falling){
+    cout << "before move: " << falling.x << "," << falling.y << endl;
+    int x = falling.x;
+    int y = falling.y+falling.move;
+    cout << "going to move to: " << x << "," << y << endl;
+
+    if(y < 0 || y >= board_col) return false;
+    for(int i = 0; i < 4; i ++){
+        Point dir = spots[falling.id][i];
+        if(game[x+dir.x][y+dir.y]) return false; // occupied
+    }
+    //falling.move = 0;
+    do_drop_move(falling,x,y);
     return true;
 }
 void GameBoard::clean(){
@@ -230,7 +241,7 @@ int main(int argc, char** argv)
             // drop_move
             if(first){
                 now.x = mygame->highest;
-                now.y = now.pos;
+                now.y = now.pos+move;
                 //cout << now.x << "," << now.y << endl;
                 mygame->put_in(now);
                 first = 0;
@@ -244,13 +255,17 @@ int main(int argc, char** argv)
                     return 0;
                 }
                 if(!mygame->check_drop(now) ){
-                    mygame->put_in(now);
+                    cout << "after drop pt: " << now.x << "," << now.y << endl;
+                    if(move != 0){
+                        if( !mygame->check_move(now)){
+                            cout << "invalid to move\n";
+                            return 0;
+                        }
+                        if( !mygame->check_drop(now))
+                            mygame->put_in(now);
+                    }
+                    else mygame->put_in(now);
                 }
-                else{
-                    cout << "inf loop\n";
-                    return 0;
-                }
-                
             }
             // 看要不要move
             /*
