@@ -164,6 +164,11 @@ bool GameBoard::check_drop(Tetris &falling){
         //cout << "x:" <<x << "," << "y:" << y << endl;
         //cout << dir.x << "," << dir.y << endl;
         //cout << "going to put:" << x+dir.x << "," << y+dir.y << endl;
+        /*
+        if(x+dir.x < 0 || x+dir.x >= board_row || y+dir.y < 0 || y+dir.y > board_col){
+            cout << "invalid to drop this at: " << x+dir.x << "," << y+dir.y << endl;
+            return 0;
+        }*/
         if(game[x+dir.x][y+dir.y]) return false; // occupied
     }
     if(x == board_row-1){
@@ -282,7 +287,10 @@ int main(int argc, char** argv)
                     }
                     mygame->check_clean();
                 }
-
+                else{
+                    cout << "invalid drop\n";
+                    return 0;
+                }
             }
         }
     }
@@ -294,7 +302,7 @@ int main(int argc, char** argv)
         }
         cout << endl;
     }
-    cout << "1 2 3 4 5 6 7 8 9 0 1 2\n";
-    cout << "end of game, remember to remove this line!!\n"; 
+    //cout << "1 2 3 4 5 6 7 8 9 0 1 2\n";
+    //cout << "end of game, remember to remove this line!!\n"; 
 	return 0;
 }
