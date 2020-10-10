@@ -42,13 +42,13 @@ int main(int argc, char** argv)
             cout << game[i][j] << " ";
         cout << endl;
     }
-    int target = 4;
+    int target = 3;
     for(int i = target; i >= 0; i --){
         game[i] = game[i-1];
     }
     for(int i = 0; i < 5; i ++)
         game[0][i] = 0;
-        
+
     for(int i = 0; i <5; i ++){
         for(int j = 0; j < 5; j ++)
             cout << game[i][j] << " ";

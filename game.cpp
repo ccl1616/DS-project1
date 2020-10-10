@@ -214,10 +214,16 @@ void GameBoard::check_clean(){
     return;
 }
 void GameBoard::do_clean(int target){
-    // clean the row
-    
+    // clean the row i
     // 降下row i以上的人們
     // do the log
+    for(int i = target; i >= 0; i --){
+        game[i] = game[i-1];
+        clean_log[i] = clean_log[i-1];
+    }
+    for(int i = 0; i < board_col; i ++)
+        game[0][i] = 0;
+    clean_log[0] = 0;
     return;
 }
 
@@ -272,9 +278,9 @@ int main(int argc, char** argv)
                             mygame->put_in(now);
                     }
                     else {
-                        // <todo> check_valid
                         mygame->put_in(now);
                     }
+                    mygame->check_clean();
                 }
 
             }
