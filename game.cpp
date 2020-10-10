@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <stdio.h>
+#include <stdlib.h>
 using namespace std;
 #define MAX_row 15
 #define MAX_col 40
@@ -164,11 +165,6 @@ bool GameBoard::check_drop(Tetris &falling){
         //cout << "x:" <<x << "," << "y:" << y << endl;
         //cout << dir.x << "," << dir.y << endl;
         //cout << "going to put:" << x+dir.x << "," << y+dir.y << endl;
-        /*
-        if(x+dir.x < 0 || x+dir.x >= board_row || y+dir.y < 0 || y+dir.y > board_col){
-            cout << "invalid to drop this at: " << x+dir.x << "," << y+dir.y << endl;
-            return 0;
-        }*/
         if(game[x+dir.x][y+dir.y]) return false; // occupied
     }
     if(x == board_row-1){
@@ -187,6 +183,11 @@ bool GameBoard::put_in(Tetris f){
     //cout << "put at: " << f.x << "," << f.y << endl;
     for(int i = 0; i < 4; i ++){
         Point dir = spots[f.id][i];
+        
+        if(f.x+dir.x < 0 || f.x+dir.x >= board_row || f.y+dir.y < 0 || f.y+dir.y >= board_col){
+            cout << "out of boundary: " << f.x+dir.x << "," << f.y+dir.y << endl;
+            return false;
+        }
         game[f.x+dir.x][f.y+dir.y]=1; // occupied
         clean_log[f.x+dir.x]++;
         highest = min(highest,f.x+dir.x); //越高的row id會是越小的
@@ -259,7 +260,7 @@ int main(int argc, char** argv)
             // check if out boundary
             if(! now.valid_in_board() ) {
                 cout << "input is out of boundary\n";
-                return 0;
+                exit(1);
             }
             // drop_move
             if(first){
@@ -277,13 +278,16 @@ int main(int argc, char** argv)
                     if(move != 0){
                         if( !mygame->check_move(now)){
                             cout << "invalid to move\n";
-                            return 0;
+                            exit(1);
                         }
-                        if( !mygame->check_drop(now))
-                            mygame->put_in(now);
+                        if( !mygame->check_drop(now)){
+                            if(! mygame->put_in(now))
+                                exit(1);
+                        }
                     }
                     else {
-                        mygame->put_in(now);
+                        if(! mygame->put_in(now))
+                            exit(1);
                     }
                     mygame->check_clean();
                 }
@@ -295,7 +299,6 @@ int main(int argc, char** argv)
         }
     }
     // ==========================================================================================
-    
     for(int i = 0; i < board_row; i ++){
         for(int j = 0; j < board_col; j ++){
             cout << game[i][j] << " ";
