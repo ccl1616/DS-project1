@@ -101,18 +101,13 @@ class Tetris{
 
         }
         bool valid_in_board(){
-            if(x == -1 && y == -1){
-                if(pos + width + move > board_col || pos+move < 0) {
-                    cout << "over width\n";
-                    return false;
-                }
-                if(height > board_row) {
-                    cout << "over height\n";
-                    return false;
-                }
+            if(pos + width + move > board_col || pos+move < 0) {
+                cout << "over width\n";
+                return false;
             }
-            else{
-                // check it by now pos
+            if(height > board_row) {
+                cout << "over height\n";
+                return false;
             }
             return true;
         }
