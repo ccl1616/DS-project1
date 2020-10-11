@@ -136,6 +136,7 @@ class GameBoard{
         void do_drop_move(Tetris &falling,int x,int y); // drop to x,y
         bool put_in(Tetris falling); //check valid, put in by current x,y
         bool check_move(Tetris &falling);
+        bool check_move_path(Tetris falling);
         void check_clean();
         void do_clean(int target);
 };
@@ -175,28 +176,23 @@ void GameBoard::do_drop_move(Tetris &falling,int x, int y){
     falling.y = y;
 }
 bool GameBoard::put_in(Tetris f){
-    //cout << "put at: " << f.x << "," << f.y << endl;
     for(int i = 0; i < 4; i ++){
         Point dir = spots[f.id][i];
-        
         if(f.x+dir.x < 0 || f.x+dir.x >= board_row || f.y+dir.y < 0 || f.y+dir.y >= board_col){
-            cout << "out of boundary: " << f.x+dir.x << "," << f.y+dir.y << endl;
+            cout << "invlaid to put: " << f.x+dir.x << "," << f.y+dir.y << endl;
             return false;
         }
-        game[f.x+dir.x][f.y+dir.y]=1; // occupied
+        game[f.x+dir.x][f.y+dir.y]=1; // make it occupy this pos
         clean_log[f.x+dir.x]++;
         highest = min(highest,f.x+dir.x); //越高的row id會是越小的
     }
     return true;
 }
-
 bool GameBoard::check_move(Tetris &falling){
-    //cout << "before move: " << falling.x << "," << falling.y << endl;
     int x = falling.x;
     int y = falling.y+falling.move;
-    //cout << "going to move to: " << x << "," << y << endl;
+    if(y < 0 || y >= board_col || !check_move_path(falling) ) return false;
 
-    if(y < 0 || y >= board_col) return false;
     for(int i = 0; i < 4; i ++){
         Point dir = spots[falling.id][i];
         if(game[x+dir.x][y+dir.y]) return false; // occupied
@@ -205,7 +201,34 @@ bool GameBoard::check_move(Tetris &falling){
     do_drop_move(falling,x,y);
     return true;
 }
-
+bool GameBoard::check_move_path(Tetris falling){
+    int x = falling.x;
+    int y = falling.y;
+    int target = falling.y+falling.move;
+    if(falling.move > 0){
+        for(int col = y+1; col <= target; col ++){
+            for(int i = 0; i < 4; i ++){
+                Point dir = spots[falling.id][i];
+                if(game[x+dir.x][col+dir.y]) {
+                    cout << "hit side wall\n";
+                    return false; // hit side wall
+                }
+            }
+        }
+    }
+    else {
+        for(int col = y-1; col >= target; col --){
+            for(int i = 0; i < 4; i ++){
+                Point dir = spots[falling.id][i];
+                if(game[x+dir.x][col+dir.y]) {
+                    cout << "hit side wall\n";
+                    return false; // hit side wall
+                }
+            }
+        }
+    }
+    return true;
+}
 void GameBoard::check_clean(){
     // check need to clean or not
     for(int i = 0; i < board_row; i ++){
@@ -232,15 +255,17 @@ int main(int argc, char** argv)
 {
     // ==========================================================================================
     // input 
-	assert(argc == 2); //assert if execution command not==2
+    //assert if invalid execution command 
+	assert(argc == 2);
     time_t start = time(NULL);
     clock_t start_clock = clock();
+
 	freopen(argv[1],"r",stdin);
     freopen("out.txt","w",stdout);
     cin >> board_row >> board_col;
     if(board_row > 15 || board_col > 40) {
         cout << "invalid matrix size\n";
-        return 0;
+        exit(1);
     }
     GameBoard* mygame = new GameBoard();
     
@@ -252,25 +277,27 @@ int main(int argc, char** argv)
         if( inputName.compare(end) == 0)
             break;
         else{
+            // input shape, exit if target pos in invalid
+            // pos-1 cause input col starts from 1
             cin >> pos >> move;
             Tetris now(inputName,pos-1,move);
-            // check if out boundary
             if(! now.valid_in_board() ) {
                 cout << "input is out of boundary\n";
                 exit(1);
             }
-            // drop_move
+            // do drop, move, clean
+            // if its the first shape, just put it to the bottom
+            // if not first, drop it above highest and operate
             if(first){
                 now.x = mygame->highest;
                 now.y = now.pos+move;
-                //cout << now.x << "," << now.y << endl;
-                mygame->put_in(now);
+                if(! mygame->put_in(now))
+                    exit(1);
                 first = 0;
             }
             else {
                 now.x = mygame->highest-1;
                 now.y = now.pos;
-                //cout << inputName << ":" << now.x << "," << now.y << endl;
                 if(!mygame->check_drop(now) ){
                     if(move != 0){
                         if( !mygame->check_move(now)){
@@ -286,13 +313,13 @@ int main(int argc, char** argv)
                         if(! mygame->put_in(now))
                             exit(1);
                     }
-                    mygame->check_clean();
                 }
                 else{
                     cout << "invalid drop\n";
                     return 0;
                 }
             }
+            mygame->check_clean();
         }
     }
     // ==========================================================================================
