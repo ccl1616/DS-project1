@@ -319,6 +319,7 @@ int main(int argc, char** argv)
         }
         if(i != board_row-1) cout << endl;
     }
+    cout << endl << "1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0\n";
     time_t stop = time(NULL);
     double duration = (double) difftime(stop,start);
     //cout << endl << "duration by time: " << duration << endl;
