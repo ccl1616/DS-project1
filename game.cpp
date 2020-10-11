@@ -4,12 +4,12 @@
 #include <sstream>
 #include <array>
 #include <vector>
-#include <map>
 #include <cassert>
 #include <cstdio>
 #include <cstdlib>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 using namespace std;
 #define MAX_row 15
 #define MAX_col 40
@@ -238,6 +238,8 @@ int main(int argc, char** argv)
     // ==========================================================================================
     // input 
 	assert(argc == 2); //assert if execution command not==2
+    time_t start = time(NULL);
+    clock_t start_clock = clock();
 	freopen(argv[1],"r",stdin);
     freopen("out.txt","w",stdout);
     cin >> board_row >> board_col;
@@ -306,6 +308,13 @@ int main(int argc, char** argv)
         cout << endl;
     }
     //cout << "1 2 3 4 5 6 7 8 9 0 1 2\n";
-    //cout << "end of game, remember to remove this line!!\n"; 
+    cout << "end of game, remember to remove this line!!\n"; 
+    time_t stop = time(NULL);
+    double duration = (double) difftime(stop,start);
+    cout << "duration by time: " << duration << endl;
+
+    clock_t stop_clock = clock();
+    double duration_clock = ((double) (stop_clock-start_clock))/ CLOCKS_PER_SEC;
+    cout << "duration by clock ticks: "<< duration_clock << endl;
 	return 0;
 }

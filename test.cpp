@@ -4,6 +4,7 @@
 #include <array>
 #include <string>
 #include <string.h>
+#include <time.h>
 using namespace std;
 struct Point{
     int x,y;
@@ -33,6 +34,8 @@ const std::array<std::array<Point, 4>, 4> spots{{
 std::array<std::array<int, 5>, 5> game;
 int main(int argc, char** argv)
 {
+    time_t start = time(NULL);
+    // main body of program comes here!
     for(int i = 0; i <5; i ++){
         for(int j = 0; j < 5; j ++)
             game[i][j] = 10*i + j;
@@ -54,6 +57,8 @@ int main(int argc, char** argv)
             cout << game[i][j] << " ";
         cout << endl;
     }
-    
+    time_t stop = time(NULL);
+    double duration = (double) difftime(stop,start);
+    cout << "duration: " << duration << endl;
     return 0;
 }
