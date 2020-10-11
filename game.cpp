@@ -132,11 +132,11 @@ class GameBoard{
 
         bool is_empty(Tetris falling); //check this place is able to drop
         
-        bool check_drop(Tetris &falling); //check next row
-        void do_drop_move(Tetris &falling,int x,int y); // drop to x,y
-        bool put_in(Tetris falling); //check valid, put in by current x,y
-        bool check_move(Tetris &falling);
-        bool check_move_path(Tetris falling);
+        bool check_drop(Tetris &falling); //check can drop to next row or not
+        void do_drop_move(Tetris &falling,int x,int y); //change it pos to target spot, used after check_drop & check_move
+        bool put_in(Tetris falling); //check spot valid, put in by current x,y
+        bool check_move(Tetris &falling); //check can move by input, call check_move_path to check along path
+        bool check_move_path(Tetris falling); //check side wall
         void check_clean();
         void do_clean(int target);
 };
@@ -158,9 +158,6 @@ bool GameBoard::check_drop(Tetris &falling){
     //cout << "check_drop: " << x << "," << y << endl;
     for(int i = 0; i < 4; i ++){
         Point dir = spots[falling.id][i];
-        //cout << "x:" <<x << "," << "y:" << y << endl;
-        //cout << dir.x << "," << dir.y << endl;
-        //cout << "going to put:" << x+dir.x << "," << y+dir.y << endl;
         if(game[x+dir.x][y+dir.y]) return false; // occupied
     }
     if(x == board_row-1){
@@ -197,7 +194,6 @@ bool GameBoard::check_move(Tetris &falling){
         Point dir = spots[falling.id][i];
         if(game[x+dir.x][y+dir.y]) return false; // occupied
     }
-    //falling.move = 0;
     do_drop_move(falling,x,y);
     return true;
 }

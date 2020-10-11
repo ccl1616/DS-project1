@@ -10,4 +10,4 @@
 0 0 0 0 0 0 0 1 0 1 
 end of game, remember to remove this line!!
 duration by time: 0
-duration by clock ticks: 0.00053
+duration by clock ticks: 0.000627
