@@ -3,12 +3,8 @@
 #include <string>
 #include <sstream>
 #include <array>
-#include <vector>
-#include <cassert>
 #include <cstdio>
 #include <cstdlib>
-#include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
 using namespace std;
 #define MAX_row 15
@@ -16,7 +12,6 @@ using namespace std;
 int board_row;
 int board_col;
 int clean_log[MAX_row];
-int height_log[MAX_col];
 
 struct Point{
     int x,y;
@@ -118,12 +113,9 @@ class GameBoard{
         int highest;
         GameBoard(){
             // reset
-            highest = board_row-1;
-            for(int i = 0; i < board_col; i ++)
-                height_log[i] = 0;
-            for(int i = 0; i < board_row; i ++)
-                clean_log[i] = 0;
+            highest = board_row;
             for(int i = 0; i < board_row; i ++){
+                clean_log[i] = 0;
                 for(int j = 0; j < board_col; j++)
                     game[i][j] = 0;
             }
@@ -160,6 +152,7 @@ bool GameBoard::check_drop(Tetris &falling){
         Point dir = spots[falling.id][i];
         if(game[x+dir.x][y+dir.y]) return false; // occupied
     }
+    //if x is already at the bottom, 更新座標後 就不用再檢查是否可以往下
     if(x == board_row-1){
         do_drop_move(falling,x,y);
         return false;
@@ -176,7 +169,7 @@ bool GameBoard::put_in(Tetris f){
     for(int i = 0; i < 4; i ++){
         Point dir = spots[f.id][i];
         if(f.x+dir.x < 0 || f.x+dir.x >= board_row || f.y+dir.y < 0 || f.y+dir.y >= board_col){
-            cout << "invlaid to put: " << f.x+dir.x << "," << f.y+dir.y << endl;
+            cout << "shape would be out of boundary" << endl;
             return false;
         }
         game[f.x+dir.x][f.y+dir.y]=1; // make it occupy this pos
@@ -244,15 +237,18 @@ void GameBoard::do_clean(int target){
     for(int i = 0; i < board_col; i ++)
         game[0][i] = 0;
     clean_log[0] = 0;
+    highest++;
+    if(highest > board_row){
+        cout << "do clean, but bug\n";
+        exit(1);
+    }
     return;
 }
 
 int main(int argc, char** argv)
 {
     // ==========================================================================================
-    // input 
-    //assert if invalid execution command 
-	assert(argc == 2);
+    // input and calculate
     time_t start = time(NULL);
     clock_t start_clock = clock();
 
@@ -269,10 +265,12 @@ int main(int argc, char** argv)
     string end = "End";
     int pos = 0, move = 0;
     bool first = true;
+    int number_tc = 0;
     while( cin >> inputName ){
-        if( inputName.compare(end) == 0)
+        if( inputName.compare(end) == 0 || number_tc > 1000 )
             break;
         else{
+            number_tc++;
             // input shape, exit if target pos in invalid
             // pos-1 cause input col starts from 1
             cin >> pos >> move;
@@ -285,7 +283,7 @@ int main(int argc, char** argv)
             // if its the first shape, just put it to the bottom
             // if not first, drop it above highest and operate
             if(first){
-                now.x = mygame->highest;
+                now.x = mygame->highest-1;
                 now.y = now.pos+move;
                 if(! mygame->put_in(now))
                     exit(1);
@@ -310,10 +308,6 @@ int main(int argc, char** argv)
                             exit(1);
                     }
                 }
-                else{
-                    cout << "invalid drop\n";
-                    return 0;
-                }
             }
             mygame->check_clean();
         }
@@ -323,16 +317,16 @@ int main(int argc, char** argv)
         for(int j = 0; j < board_col; j ++){
             cout << game[i][j] << " ";
         }
-        cout << endl;
+        if(i != board_row-1) cout << endl;
     }
-    //cout << "1 2 3 4 5 6 7 8 9 0 1 2\n";
-    cout << "end of game, remember to remove this line!!\n"; 
     time_t stop = time(NULL);
     double duration = (double) difftime(stop,start);
-    cout << "duration by time: " << duration << endl;
+    //cout << endl << "duration by time: " << duration << endl;
 
     clock_t stop_clock = clock();
     double duration_clock = ((double) (stop_clock-start_clock))/ CLOCKS_PER_SEC;
-    cout << "duration by clock ticks: "<< duration_clock << endl;
+    //cout << endl << "duration by clock ticks: "<< duration_clock << endl;
+    
+    fclose (stdout);
 	return 0;
 }
