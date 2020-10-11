@@ -97,11 +97,11 @@ class Tetris{
         }
         bool valid_in_board(){
             if(pos + width + move > board_col || pos+move < 0) {
-                cout << "over width\n";
+                //cout << "over width\n";
                 return false;
             }
             if(height > board_row) {
-                cout << "over height\n";
+                //cout << "over height\n";
                 return false;
             }
             return true;
@@ -121,9 +121,6 @@ class GameBoard{
             }
         }
         ~GameBoard(){ }
-
-        bool is_empty(Tetris falling); //check this place is able to drop
-        
         bool check_drop(Tetris &falling); //check can drop to next row or not
         void do_drop_move(Tetris &falling,int x,int y); //change it pos to target spot, used after check_drop & check_move
         bool put_in(Tetris falling); //check spot valid, put in by current x,y
@@ -133,16 +130,6 @@ class GameBoard{
         void do_clean(int target);
 };
 
-bool GameBoard::is_empty(Tetris f){
-    for(int i = 0; i < 4; i ++){
-        Point dir = spots[f.id][i];
-        //cout << "x:" <<x << "," << "y:" << y << endl;
-        //cout << dir.x << "," << dir.y << endl;
-        //cout << "going to put:" << x+dir.x << "," << y+dir.y << endl;
-        if(game[f.x+dir.x][f.y+dir.y]) return false; // is occupied
-    }
-    return true;
-}
 bool GameBoard::check_drop(Tetris &falling){
     if(falling.x == board_row-1) return false;
     int x = falling.x+1;
@@ -169,7 +156,7 @@ bool GameBoard::put_in(Tetris f){
     for(int i = 0; i < 4; i ++){
         Point dir = spots[f.id][i];
         if(f.x+dir.x < 0 || f.x+dir.x >= board_row || f.y+dir.y < 0 || f.y+dir.y >= board_col){
-            cout << "shape would be out of boundary" << endl;
+            //cout << "shape would be out of boundary" << endl;
             return false;
         }
         game[f.x+dir.x][f.y+dir.y]=1; // make it occupy this pos
@@ -199,7 +186,7 @@ bool GameBoard::check_move_path(Tetris falling){
             for(int i = 0; i < 4; i ++){
                 Point dir = spots[falling.id][i];
                 if(game[x+dir.x][col+dir.y]) {
-                    cout << "hit side wall\n";
+                    //cout << "hit side wall\n";
                     return false; // hit side wall
                 }
             }
@@ -210,7 +197,7 @@ bool GameBoard::check_move_path(Tetris falling){
             for(int i = 0; i < 4; i ++){
                 Point dir = spots[falling.id][i];
                 if(game[x+dir.x][col+dir.y]) {
-                    cout << "hit side wall\n";
+                    //cout << "hit side wall\n";
                     return false; // hit side wall
                 }
             }
@@ -239,7 +226,7 @@ void GameBoard::do_clean(int target){
     clean_log[0] = 0;
     highest++;
     if(highest > board_row){
-        cout << "do clean, but bug\n";
+        //cout << "do clean, but bug\n";
         exit(1);
     }
     return;
@@ -253,10 +240,10 @@ int main(int argc, char** argv)
     clock_t start_clock = clock();
 
 	freopen(argv[1],"r",stdin);
-    freopen("out.txt","w",stdout);
+    freopen("108042019_proj1.final","w",stdout);
     cin >> board_row >> board_col;
     if(board_row > 15 || board_col > 40) {
-        cout << "invalid matrix size\n";
+        //cout << "invalid matrix size\n";
         exit(1);
     }
     GameBoard* mygame = new GameBoard();
@@ -276,7 +263,7 @@ int main(int argc, char** argv)
             cin >> pos >> move;
             Tetris now(inputName,pos-1,move);
             if(! now.valid_in_board() ) {
-                cout << "input is out of boundary\n";
+                //cout << "input is out of boundary\n";
                 exit(1);
             }
             // do drop, move, clean
@@ -295,7 +282,7 @@ int main(int argc, char** argv)
                 if(!mygame->check_drop(now) ){
                     if(move != 0){
                         if( !mygame->check_move(now)){
-                            cout << "invalid to move\n";
+                            //cout << "invalid to move\n";
                             exit(1);
                         }
                         if( !mygame->check_drop(now)){
