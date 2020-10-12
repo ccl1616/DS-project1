@@ -218,7 +218,7 @@ void GameBoard::do_clean(int target){
     // clean the row i
     // 降下row i以上的人們
     // do the log
-    for(int i = target; i >= 0; i --){
+    for(int i = target; i > 0; i --){
         game[i] = game[i-1];
         clean_log[i] = clean_log[i-1];
     }
@@ -254,7 +254,7 @@ int main(int argc, char** argv)
     int pos = 0, move = 0;
     bool first = true;
     int number_tc = 0;
-    while( cin >> inputName ){
+    while( cin >> inputName){
         if( inputName.compare(end) == 0 || number_tc > 1000 )
             break;
         else{
