@@ -1,8 +1,8 @@
+invalid: hit side wall I123,2
+invalid: moving out of boundary 2
+invalid: moveI1 2
 0 0 0 0 0 
 0 0 0 0 0 
 0 0 0 0 0 
-0 0 0 0 0 
-0 0 0 0 0 
-0 0 0 1 0 
-0 0 1 1 0 
-0 0 1 0 0 
+0 0 0 1 1 
+0 0 0 1 1 
