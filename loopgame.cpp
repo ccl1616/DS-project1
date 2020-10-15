@@ -20,32 +20,32 @@ struct Point{
     Point() : Point(0, 0) {}
 	Point(int x, int y) : x(x), y(y) {}
 };
-std::array<std::array<bool, MAX_col>, MAX_row> game;
+std::array<std::array<bool, MAX_col>, MAX_row+4 > game;
 
 const std::array<std::array<Point, 4>, 19> spots{{
-            {Point(-1,-1),Point(-1,0),Point(-1,1),Point(0,0)}, // special
-            {Point(-2,0),Point(-1,-1),Point(-1,0),Point(0,0)}, // spacial
-            {Point(-1,1),Point(0,0),Point(0,1),Point(0,2)},
-            {Point(-2,0),Point(-1,0),Point(-1,1),Point(0,0)},
+            {Point(0,0),Point(-1,-1),Point(-1,0),Point(-1,1)}, // special
+            {Point(0,0),Point(-1,-1),Point(-1,0),Point(-2,0)}, // spacial
+            {Point(0,0),Point(0,1),Point(0,2),Point(-1,1)},
+            {Point(0,0),Point(-1,0),Point(-1,1),Point(-2,0)},
 
-            {Point(-2,0),Point(-1,0),Point(0,0),Point(0,1)},
-            {Point(-1,0),Point(-1,1),Point(-1,2),Point(0,0)},
-            {Point(-2,-1),Point(-2,0),Point(-1,0),Point(0,0)}, //special
-            {Point(-1,2),Point(0,0),Point(0,1),Point(0,2)},
+            {Point(0,0),Point(0,1),Point(-1,0),Point(-2,0)},
+            {Point(0,0),Point(-1,0),Point(-1,1),Point(-1,2)},
+            {Point(0,0),Point(-1,0),Point(-2,0),Point(-2,-1) }, //special
+            {Point(0,0),Point(0,1),Point(0,2),Point(-1,2)},
 
-            {Point(-2,1),Point(-1,1),Point(0,0),Point(0,1)},
-            {Point(-1,0),Point(0,0),Point(0,1),Point(0,2)},
-            {Point(-2,0),Point(-2,1),Point(-1,0),Point(0,0)},
-            {Point(-1,-2),Point(-1,-1),Point(-1,0),Point(0,0)}, //special
+            {Point(0,0),Point(0,1),Point(-1,1),Point(-2,1) },
+            {Point(0,0),Point(0,1),Point(0,2),Point(-1,0)},
+            {Point(0,0),Point(-1,0),Point(-2,0),Point(-2,1) },
+            {Point(0,0) ,Point(-1,0),Point(-1,-1),Point(-1,-2) }, //special
 
-            {Point(-1,1),Point(-1,2),Point(0,0),Point(0,1)},
-            {Point(-2,-1),Point(-1,-1),Point(-1,0),Point(0,0)}, //spacial
-            {Point(-1,-1),Point(-1,0),Point(0,0),Point(0,1)}, //special
-            {Point(-2,1),Point(-1,0),Point(-1,1),Point(0,0)},
+            {Point(0,0),Point(0,1),Point(-1,1),Point(-1,2)  },
+            {Point(0,0),Point(-1,0),Point(-1,-1),Point(-2,-1) }, //spacial
+            {Point(0,0),Point(0,1),Point(-1,0),Point(-1,-1) }, //special
+            {Point(0,0),Point(-1,0),Point(-1,1),Point(-2,1) },
 
-            {Point(-3,0),Point(-2,0),Point(-1,0),Point(0,0)},
+            {Point(0,0),Point(-1,0),Point(-2,0),Point(-3,0) },
             {Point(0,0),Point(0,1),Point(0,2),Point(0,3)},
-            {Point(-1,0),Point(-1,1),Point(0,0),Point(0,1)}
+            {Point(0,0),Point(0,1),Point(-1,0),Point(-1,1) }
 }};
 
 class Tetris{
@@ -99,7 +99,7 @@ class Tetris{
         }
         bool valid_in_board(){
             if(pos + width + move > board_col || pos+move < 0) {
-                //cout << "over width\n";
+                cout << "over width\n";
                 return false;
             }
             return true;
@@ -139,10 +139,6 @@ bool GameBoard::check_drop(Tetris &falling){
         x ++; //try one down
         for(int i = 0; i < 4; i ++){
             Point dir = spots[falling.id][i];
-            if(falling.x+dir.x < 0 || falling.x+dir.x >= board_row || falling.y+dir.y < 0 || falling.y+dir.y >= board_col){
-                //cout << "invalid: check_drop out bound" << falling.name << " " << number_tc << endl;
-                exit(1);
-            }
             if(game[x+dir.x][y+dir.y]) {
                 x--; //go back one row
                 do_drop_move(falling,x,y);
@@ -160,13 +156,16 @@ void GameBoard::do_drop_move(Tetris &falling,int x, int y){
 bool GameBoard::put_in(Tetris f){
     for(int i = 0; i < 4; i ++){
         Point dir = spots[f.id][i];
-        if(f.x+dir.x < 0 || f.x+dir.x >= board_row || f.y+dir.y < 0 || f.y+dir.y >= board_col){
-            //cout << "invalid: shape would be out of boundary" << f.name << " " << f.pos << endl;
-            return false;
-        }
         if(game[f.x+dir.x][f.y+dir.y]) {
             //cout << "invalid: here is occupied " << number_tc << endl;
+            cout << f.x << "," << f.y << endl;
+            cout << "occupied: " << f.name << " " << f.x+dir.x << "," << f.y+dir.y << endl;
+            cout << number_tc << endl;
             return false;
+        }
+        if(f.x+dir.x < 0 || f.x+dir.x >= board_row+4 || f.y+dir.y < 0 || f.y+dir.y >= board_col){
+            cout << "invalid: to put" << f.name << " "  << f.x+dir.x << "," << f.y+dir.y << endl;
+            exit(1);
         }
         game[f.x+dir.x][f.y+dir.y]=1; // make it occupy this pos
         clean_log[f.x+dir.x]++;
@@ -184,10 +183,6 @@ bool GameBoard::check_move(Tetris &falling){
 
     for(int i = 0; i < 4; i ++){
         Point dir = spots[falling.id][i];
-        if(falling.x+dir.x < 0 || falling.x+dir.x >= board_row || falling.y+dir.y < 0 || falling.y+dir.y >= board_col){
-            //cout << "invalid: check_move out bound " << falling.name << " " << number_tc << endl;
-            return false;
-        }
         if(game[x+dir.x][y+dir.y]) {
             //cout << "invalid: check_move destination is occupied, at " << x+dir.x << "," << y+dir.y << endl;
             return false; // occupied
@@ -296,21 +291,23 @@ int main(int argc, char** argv)
             }
             // do drop, move, clean
             // if its the first shape, just put it to the bottom
-            // if not first, drop it above highest and operate
+            // if not first, drop it above its refpt highest and operate
             if(first){
-                now.x = board_row-1;
+                now.x += board_row-1;
                 now.y += now.pos+move;
                 //cout << number_tc << ":" << now.x << "," << now.y << endl;
                 if(! mygame->put_in(now)){
                     //cout << now.x << "," << now.y << endl;
-                    //cout << "invalid to put first tetris\n";
+                    cout << "invalid to put first tetris\n";
                     exit(1);
                 }
+                cout << "drop success";
+                cout << number_tc << ":" << now.x << "," << now.y << endl;
                 first = 0;
             }
             else {
                 now.y += now.pos;
-                now.x = mygame->h_width(now) -1;
+                now.x += mygame->h_width(now) -1;
                 //cout << number_tc << ":" << now.x << "," << now.y << endl;
                 if(now.x < 0){
                     //cout << now.x << endl;
@@ -318,8 +315,8 @@ int main(int argc, char** argv)
                     break;
                 }
                 if(!mygame->check_drop(now) ){
-                    //cout << "before move: ";
-                    //cout << now.x << "," << now.y << endl;
+                    cout << "drop success";
+                    cout << number_tc << ":" << now.x << "," << now.y << endl;
                     if(move != 0){
                         if( !mygame->check_move(now)){
                             //cout << "invalid: move" << now.name << " " << now.pos << endl;
@@ -336,13 +333,14 @@ int main(int argc, char** argv)
                     }
                     else {
                         if(! mygame->put_in(now)){
-                            //cout << "invalid: drop put_in" << now.name << " " << now.pos << endl;
+                            cout << "invalid: drop put_in" << now.name << " " << now.pos << now.y << endl;
                             //break;
                             exit(1);
                         }
                     }
                 }
                 else {
+                    cout << "hi\n";
                     exit(1);
                 }
             }
