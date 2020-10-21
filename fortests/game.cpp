@@ -130,17 +130,7 @@ class GameBoard{
         void do_clean(int target);
         int h_width(Tetris falling);
         void print_board();
-        bool check_board();
 };
-
-bool GameBoard::check_board(){
-    for(int i = 0; i < 4; i ++){
-        for(int j = 0; j < board_col; j ++){
-            if(game[i][j]) return false;
-        }
-    }
-    return true;
-}
 
 bool GameBoard::check_drop(Tetris &falling){
     if(falling.x == last_row_id) return false; //already at the bottom
@@ -178,7 +168,9 @@ bool GameBoard::put_in(Tetris f){
         }
         game[f.x+dir.x][f.y+dir.y]=1; // make it occupy this pos
         clean_log[f.x+dir.x]++;
-        h_log[f.y+dir.y] = min(h_log[f.y+dir.y],f.x+dir.x); //越高的row id會是越小的
+
+        // higher row has smaller row id
+        h_log[f.y+dir.y] = min(h_log[f.y+dir.y],f.x+dir.x); 
     }
     return true;
 }
@@ -232,9 +224,8 @@ void GameBoard::check_clean(){
 }
 void GameBoard::do_clean(int target){
     // clean the row i
-    // 降下row i以上的人們
+    // move all above downward 1 row
     // do the log
-    // i不可以=0 ! 否則i-1=-1 !
     for(int i = target; i > 0; i --){
         game[i] = game[i-1];
         clean_log[i] = clean_log[i-1];
@@ -272,14 +263,11 @@ int main(int argc, char** argv)
 {
     // ==========================================================================================
     // input and calculate
+    time_t start = time(NULL);
     clock_t start_clock = clock();
-	//freopen(argv[1],"r",stdin);
-    //freopen("out.txt","w",stdout);
-    fstream fin, fout;
-    fin.open(argv[1], ios::in);
-    fout.open("out.txt", ios::out);
-
-    fin >> board_row >> board_col;
+	freopen(argv[1],"r",stdin);
+    freopen("out.txt","w",stdout);
+    cin >> board_row >> board_col;
     if(board_row > 15 || board_col > 40) {
         //cout << "invalid: matrix size\n";
         exit(1);
@@ -291,14 +279,14 @@ int main(int argc, char** argv)
     string end = "End";
     int pos = 0, move = 0;
     bool first = true;
-    while( fin >> inputName){
+    while( cin >> inputName){
         if( inputName.compare(end) == 0 || number_tc > 1000 )
             break;
         else{
             number_tc++;
             // input shape, exit if target pos in invalid
             // pos-1 cause input col starts from 1
-            fin >> pos >> move;
+            cin >> pos >> move;
             Tetris now(inputName,pos-1,move);
             if(! now.valid_in_board() ) {
                 cout << "invalid, width out of bound\n";
@@ -351,22 +339,15 @@ int main(int argc, char** argv)
                 }
             }
             mygame->check_clean();
-            if( !mygame->check_board() ){
-                fout << "invalid even after clean row\n";
-                exit(1);
-            }
         }
+        
     }
-    //mygame->print_board();
-    for(int i = 0; i < board_row; i ++){
-        for(int j = 0; j < board_col; j ++){
-            fout << game[4+i][j];
-            if(j != board_col-1) fout << " ";
-        }
-        fout << endl;
-    }
-    
+    mygame->print_board();
     // ==========================================================================================
+    time_t stop = time(NULL);
+    double duration = (double) difftime(stop,start);
+    //cout << endl << "duration by time: " << duration << endl;
+
     clock_t stop_clock = clock();
     double duration_clock = ((double) (stop_clock-start_clock))/ CLOCKS_PER_SEC;
     //cout << endl << "duration by clock ticks: "<< duration_clock << endl;
